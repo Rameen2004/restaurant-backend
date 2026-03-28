@@ -9,7 +9,7 @@ cursor.execute("TRUNCATE TABLE menu_items")
 menu_items = [
     # Format: (Name, Description, Price, Category, Is_Available, Image_URL)
     
-    # --- Desi (With your 10 URLs) ---
+    # --- Desi  ---
     ("Chicken Biryani", "Fragrant basmati rice cooked with spiced chicken and herbs", 450.00, "Desi", True, "https://i.postimg.cc/tTc6wBCZ/chicken-biryani.jpg"),
     ("Mutton Karahi", "Tender mutton cooked in a tomato and green chili gravy", 1200.00, "Desi", True, "https://i.postimg.cc/rFVBpg8B/mutton-karahi.jpg"),
     ("Paneer Tikka", "Grilled cubes of cottage cheese marinated in tandoori spices", 350.00, "Desi", True, "https://i.postimg.cc/65qMSPWm/paneer-tikka.jpg"),

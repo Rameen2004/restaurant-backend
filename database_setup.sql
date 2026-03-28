@@ -9,3 +9,7 @@ CREATE TABLE menu_items (
     category VARCHAR(50) NOT NULL,
     is_available BOOLEAN DEFAULT TRUE
 );
+
+USE restaurant_db;
+ALTER TABLE menu_items
+ADD COLUMN image_url VARCHAR(500) DEFAULT NULL;

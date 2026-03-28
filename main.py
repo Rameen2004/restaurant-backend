@@ -38,7 +38,6 @@ def add_menu_item(item: MenuItemCreate):
     return {"message": "Menu item added successfully", "id": new_id}
 
 # PUT - Update an existing menu item
-# PUT - Update an existing menu item (Complete Version)
 @app.put("/menu/{item_id}")
 def update_menu_item(item_id: int, item: MenuItemUpdate):
     conn = get_connection()

@@ -7,6 +7,7 @@ class MenuItemCreate(BaseModel):
     price: float
     category: str
     is_available: bool = True
+    image_url: Optional[str] = None
 
 class MenuItemUpdate(BaseModel):
     name: Optional[str] = None
@@ -14,3 +15,4 @@ class MenuItemUpdate(BaseModel):
     price: Optional[float] = None
     category: Optional[str] = None
     is_available: Optional[bool] = None
+    image_url: Optional[str] = None

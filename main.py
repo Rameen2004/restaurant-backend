@@ -27,15 +27,18 @@ def get_menu():
 def add_menu_item(item: MenuItemCreate):
     conn = get_connection()
     cursor = conn.cursor()
-    query = """INSERT INTO menu_items (name, description, price, category, is_available)
-               VALUES (%s, %s, %s, %s, %s)"""
-    cursor.execute(query, (item.name, item.description, item.price, item.category, item.is_available))
+    # Added 'image_url' and one more '%s'
+    query = """INSERT INTO menu_items (name, description, price, category, is_available, image_url)
+               VALUES (%s, %s, %s, %s, %s, %s)"""
+    # Added item.image_url at the end of the tuple
+    cursor.execute(query, (item.name, item.description, item.price, item.category, item.is_available, item.image_url))
     conn.commit()
     new_id = cursor.lastrowid
     conn.close()
     return {"message": "Menu item added successfully", "id": new_id}
 
 # PUT - Update an existing menu item
+# PUT - Update an existing menu item (Complete Version)
 @app.put("/menu/{item_id}")
 def update_menu_item(item_id: int, item: MenuItemUpdate):
     conn = get_connection()
@@ -43,6 +46,7 @@ def update_menu_item(item_id: int, item: MenuItemUpdate):
 
     fields = []
     values = []
+
     if item.name is not None:
         fields.append("name = %s")
         values.append(item.name)
@@ -58,19 +62,34 @@ def update_menu_item(item_id: int, item: MenuItemUpdate):
     if item.is_available is not None:
         fields.append("is_available = %s")
         values.append(item.is_available)
-
+    
+   
+    if item.image_url is not None:
+        fields.append("image_url = %s")
+        values.append(item.image_url)
+   
     if not fields:
+        conn.close()
         raise HTTPException(status_code=400, detail="No fields to update")
 
+    # Add the item_id at the very end for the WHERE clause
     values.append(item_id)
+    
     query = f"UPDATE menu_items SET {', '.join(fields)} WHERE id = %s"
-    cursor.execute(query, values)
-    conn.commit()
+    
+    try:
+        cursor.execute(query, values)
+        conn.commit()
 
-    if cursor.rowcount == 0:
-        raise HTTPException(status_code=404, detail="Item not found")
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Item not found")
 
-    conn.close()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
     return {"message": "Menu item updated successfully"}
 
 # DELETE - Remove a menu item

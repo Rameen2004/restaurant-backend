@@ -18,8 +18,8 @@ def hash_password(plain: str) -> str:
 
 users = [
     # (name, email, password, role)
-    ("Admin User",  "admin@saveur.com",  "Admin@123",  "admin"),
-    ("Rider One",   "rider1@saveur.com", "Rider@123",  "rider"),
+    ("Admin User",  "kh.com",  "123456",  "admin"),
+    ("Rider One",   "ka09196@st.habib.edu.pk",  "123456",   "rider"),
     ("Rider Two",   "rider2@saveur.com", "Rider@123",  "rider"),
 ]
 

@@ -81,36 +81,33 @@ def login(credentials: UserLogin):
         }
     }
 
-# ```
+@app.post("/auth/reset-password")
+def reset_password(data: dict):
+    email = data.get("email")
+    new_password = data.get("new_password")
 
-# **The flow is now:**
-# ```
-# Customer login:
-#   Firebase checks password ✅ (always current, even after reset)
-#   MySQL returns name/role/id ✅
+    if not email or not new_password:
+        raise HTTPException(status_code=400, detail="Email and new password are required")
 
-# Admin/Rider login:
-#   MySQL checks password directly ✅ (unchanged)
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
 
+    cursor.execute("SELECT * FROM users WHERE email = %s AND role IN ('admin', 'rider')", (email,))
+    user = cursor.fetchone()
 
-# ─────────────────────────────────────────────────────────────────────────────
-# ADD THIS TO YOUR main.py  (paste after your existing /auth/login endpoint)
-# Also add GoogleLogin to your models.py imports (model shown below)
-# ─────────────────────────────────────────────────────────────────────────────
+    if not user:
+        conn.close()
+        return {"message": "ok"}  # silently ignore if customer — Firebase handled it
 
-# In models.py, add this class:
-#
-# class GoogleLogin(BaseModel):
-#     name: str
-#     email: str
-#     uid: str    # Firebase UID
+    new_hash = bcrypt.hashpw(new_password.encode(), bcrypt.gensalt()).decode()
+    cursor.execute(
+        "UPDATE users SET password_hash = %s WHERE email = %s AND role IN ('admin', 'rider')",
+        (new_hash, email)
+    )
+    conn.commit()
+    conn.close()
 
-# ─────────────────────────────────────────────────────────────────────────────
-# In main.py, add this import at the top:
-#   from models import ..., GoogleLogin
-#
-# Then add this endpoint:
-# ─────────────────────────────────────────────────────────────────────────────
+    return {"message": "Password updated"}
 
 @app.post("/auth/google-login")
 def google_login(user: GoogleLogin):
@@ -161,9 +158,9 @@ def google_login(user: GoogleLogin):
     }
 
 
-# ══════════════════════════════════════════════════════
-#  MENU ENDPOINTS (unchanged from your partner's work)
-# ══════════════════════════════════════════════════════
+# ═════════════════════
+#  MENU ENDPOINTS 
+# ═════════════════════
 
 @app.get("/menu")
 def get_menu():

@@ -4,6 +4,6 @@ def get_connection():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="#",  # ← replace with your MySQL password
+        password="sql123!",  # ← replace with your MySQL password
         database="restaurant_db"
     )

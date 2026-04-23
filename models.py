@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional
 
-
-# ── Menu Models (existing) ────────────────────────────────────────────────────
+# ── Menu Models (unchanged) ───────────────────────────────────────────────────
 
 class MenuItemCreate(BaseModel):
     name: str
@@ -21,16 +20,17 @@ class MenuItemUpdate(BaseModel):
     image_url: Optional[str] = None
 
 
-# ── Auth Models (new) ─────────────────────────────────────────────────────────
+# ── Auth Models ───────────────────────────────────────────────────────────────
 
 class UserRegister(BaseModel):
     name: str
     email: str
+    phone: str
     password: str
-    # role is always 'customer' for self-registration; enforced in the endpoint
 
 class UserLogin(BaseModel):
-    email: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
     password: str
     role: str   # 'customer' | 'admin' | 'rider'
 
@@ -44,3 +44,20 @@ class GoogleLogin(BaseModel):
     name: str
     email: str
     uid: str
+
+class PhoneLookup(BaseModel):
+    phone: str
+
+# ── OTP Models ────────────────────────────────────────────────────────────────
+
+class SendOTP(BaseModel):
+    email: str
+
+class VerifyOTP(BaseModel):
+    email: str
+    otp: str
+
+class ResetPasswordOTP(BaseModel):
+    email: str
+    otp: str
+    new_password: str
